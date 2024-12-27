@@ -1,0 +1,7 @@
+name: FinalTick
+version: '1.0.0'
+main: com.karahanbuhan.finaltick.FinalTickPlugin
+api-version: '1.21'
+authors: [ Schaffer79 ]
+description: Countdown to a time specified in config file with custom command triggers.
+website: https://caypartisi.com
