@@ -8,9 +8,9 @@ A Spigot plugin for executing commands at specified intervals before a target ti
 # Target time in milliseconds since Unix Epoch (https://currentmillis.com/)
 target: 1735340940000
 triggers:
-  # This is triggered always as it is infinite (corresponds to 68 years, so should work for most cases)
   100000000:
     - "say This will be called once and for sure, you can initialize scoreboards and stuff here"
+  # This is triggered always as it is infinite (corresponds to 68 years, so should work for most cases)
   -100000000:
     - "say &3%countdown% seconds left!" # & character is used for color, and %countdown% for the countdown in seconds
   60:
