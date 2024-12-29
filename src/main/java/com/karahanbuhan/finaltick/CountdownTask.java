@@ -2,24 +2,28 @@ package com.karahanbuhan.finaltick;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.boss.BossBar;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class CountdownTask extends BukkitRunnable {
     private final Countdown countdown;
-    private LinkedHashMap<Integer, String[]> triggers;
+    private final LinkedHashMap<Integer, String[]> triggers;
 
-    public CountdownTask(Countdown countdown, Map<Integer, String[]> triggers) {
+    private final BossBarHandler bossBarHandler;
+    private final Map<Integer, BossBar> bossbars;
+
+    public CountdownTask(Countdown countdown, Map<Integer, String[]> triggers, BossBarHandler bossBarHandler, Map<Integer, BossBar> bossbars) {
         this.countdown = countdown;
         // Sorting to run triggers by order if timing problems occur
         this.triggers = triggers.entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+
+        this.bossBarHandler = bossBarHandler;
+        this.bossbars = bossbars;
     }
 
     private int lastNegative = 0;
@@ -33,6 +37,13 @@ public class CountdownTask extends BukkitRunnable {
                 executeCommands(Arrays.stream(commands).map(s -> s.replace("%countdown%", String.valueOf(count))).map(s -> ChatColor.translateAlternateColorCodes('&', s)).toArray(String[]::new));
                 completedTriggerA.set(Optional.of(lastXSeconds));
                 return; // This is to break the forEach, one trigger per run at maximum, DO NOT REMOVE!
+            }
+        });
+
+        //Bossbar
+        bossbars.forEach((i, b) -> {
+            if (count == i){
+                bossBarHandler.updateActiveBossbar(b);
             }
         });
 

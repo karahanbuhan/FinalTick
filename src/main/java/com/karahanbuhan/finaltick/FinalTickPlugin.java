@@ -1,19 +1,24 @@
 package com.karahanbuhan.finaltick;
 
+import org.bukkit.Bukkit;
+import org.bukkit.boss.BossBar;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Map;
 
 public class FinalTickPlugin extends JavaPlugin {
+
     @Override
     public void onEnable() {
         getLogger().info("Reading configuration to create countdown task");
         final long target;
         final Map<Integer, String[]> triggers;
+        final Map<Integer, BossBar> bossbars;
         try {
             final Configuration config = new Configuration(this);
             target = config.getTarget();
             triggers = config.getTriggers();
+            bossbars = config.getBossbars();
         } catch (Exception e) {
             getLogger().warning("Could not load config: " + e);
             setEnabled(false);
@@ -34,8 +39,12 @@ public class FinalTickPlugin extends JavaPlugin {
         }
 
         getLogger().info("Starting countdown task, remaining time is %d seconds.".formatted(countdown.getTimeRemainingMillis() * 1000));
-        final CountdownTask countdownTask = new CountdownTask(countdown, triggers);
+
+        final BossBarHandler bossBarHandler = new BossBarHandler();
+        final CountdownTask countdownTask = new CountdownTask(countdown, triggers, bossBarHandler, bossbars);
         countdownTask.runTaskTimer(this, 0l, 20l);
+
+        Bukkit.getPluginManager().registerEvents(bossBarHandler, this);
 
         getLogger().info("Plugin enabled");
         super.onEnable();

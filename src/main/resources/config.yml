@@ -14,3 +14,20 @@ triggers:
     - "give @a minecraft:diamond"
   0:
     - "say &7OLEY!"
+
+bossbars:
+  60: # Remaining time (in seconds)
+    Title: "&b1 minute remaining!" # BossBar title
+    Progress: 0.0 # BossBar fill level (0.0 - 1.0)
+    Color: WHITE # BossBar color (RED, BLUE, GREEN, etc.)
+    Style: SEGMENTED_10 # BossBar style (SOLID, SEGMENTED_6, SEGMENTED_10, etc.)
+  30:
+    Title: "&b30 seconds left!"
+    Progress: 0.5
+    Color: WHITE
+    Style: SEGMENTED_10
+  0:
+    Title: "&bHappy New Year!"
+    Progress: 1.0
+    Color: WHITE
+    Style: SEGMENTED_10
