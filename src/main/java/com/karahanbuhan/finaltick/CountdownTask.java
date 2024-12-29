@@ -14,12 +14,18 @@ import java.util.stream.Collectors;
 
 public class CountdownTask extends BukkitRunnable {
     private final Countdown countdown;
-    private LinkedHashMap<Integer, String[]> triggers;
+    private final LinkedHashMap<Integer, String[]> triggers;
 
-    public CountdownTask(Countdown countdown, Map<Integer, String[]> triggers) {
+    private final BossBarHandler bossBarHandler;
+    private final Map<Integer, BossBarProperties> bossBarProperties;
+
+    public CountdownTask(Countdown countdown, Map<Integer, String[]> triggers, BossBarHandler bossBarHandler, Map<Integer, BossBarProperties> bossBarProperties) {
         this.countdown = countdown;
         // Sorting to run triggers by order if timing problems occur
         this.triggers = triggers.entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+
+        this.bossBarHandler = bossBarHandler;
+        this.bossBarProperties = bossBarProperties;
     }
 
     private int lastNegative = 0;
@@ -33,6 +39,13 @@ public class CountdownTask extends BukkitRunnable {
                 executeCommands(Arrays.stream(commands).map(s -> s.replace("%countdown%", String.valueOf(count))).map(s -> ChatColor.translateAlternateColorCodes('&', s)).toArray(String[]::new));
                 completedTriggerA.set(Optional.of(lastXSeconds));
                 return; // This is to break the forEach, one trigger per run at maximum, DO NOT REMOVE!
+            }
+        });
+
+        //Bossbar
+        bossBarProperties.forEach((i, b) -> {
+            if (count == i){
+                bossBarHandler.updateActiveBossbar(b);
             }
         });
 

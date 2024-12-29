@@ -1,5 +1,7 @@
 package com.karahanbuhan.finaltick;
 
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -50,5 +52,27 @@ public class Configuration {
         }
 
         return triggers;
+    }
+
+    public Map<Integer, BossBarProperties> getBossBarProperties() {
+        Map<Integer, BossBarProperties> bossBarProperties = new HashMap<>();
+        ConfigurationSection bossbarsSection = config.getConfigurationSection("bossbars");
+
+        if (bossbarsSection != null){
+            for (String key : bossbarsSection.getKeys(false)) {
+                int time = Integer.parseInt(key);
+
+                String title = bossbarsSection.getString(key + ".Title").replace("&", "§");
+                double progress = bossbarsSection.getDouble(key + ".Progress");
+                BarColor color = BarColor.valueOf(bossbarsSection.getString(key + ".Color"));
+                BarStyle style = BarStyle.valueOf(bossbarsSection.getString(key + ".Style"));
+
+                BossBarProperties properties = new BossBarProperties(title, progress, color, style);
+
+                bossBarProperties.put(time, properties);
+            }
+        }
+
+        return bossBarProperties;
     }
 }
